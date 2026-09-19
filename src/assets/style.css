@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+html, body {
+  background-color: #0f172a;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom Utilities untuk Tampilan Mobile */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
