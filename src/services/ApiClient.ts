@@ -29,18 +29,25 @@ apiClient.interceptors.response.use(
     if (error.response) {
       const data = error.response.data as { status?: string; message?: string };
 
+      // Ambil base path dari Vite env, atau default ke '/servicenow/'
+      const baseUrl = '/servicenow/';
+
       // Cek jika status error dan pesan menunjukkan token expired atau unauthorized (401)
       if (
-        (data && data.message && data.message.toLowerCase().includes('token expired')) ||
-        error.response.status === 401
+        (data && data.message && typeof data.message === 'string' && data.message.toLowerCase().includes('token expired')) ||
+        (error.response && error.response.status === 401)
       ) {
         // 1. Hapus sesi lokal yang invalid
         localStorage.removeItem('jwt_token');
         localStorage.removeItem('user_data');
 
-        // 2. Redirect ke halaman login jika belum di halaman login
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login?expired=true';
+        // 2. Buat target path login yang sudah menggunakan base path
+        // Menggabungkan base path (misal: '/servicenow/') dengan 'login'
+        const loginPath = `${baseUrl.replace(/\/$/, '')}/login`; // Hasil: /servicenow/login
+
+        // 3. Redirect ke halaman login jika saat ini belum di halaman login
+        if (!window.location.pathname.endsWith('/login')) {
+          window.location.href = `${loginPath}?expired=true`;
         }
       }
     }
